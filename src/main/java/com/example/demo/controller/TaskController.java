@@ -33,13 +33,12 @@ public class TaskController {
     }
 
     @GetMapping("findByDone/{done}")
-    public ResponseEntity<List<TaskEntity>> getTaskByTitle(@PathVariable Boolean done ){
+    public ResponseEntity<List<TaskEntity>> getTaskByDone(@PathVariable Boolean done ){
         return ResponseEntity.ok().body(repository.findByDone(done));
     }
 
-
     @PostMapping
-    public ResponseEntity<TaskEntity> salvar (@RequestBody TaskEntity task){
+    public ResponseEntity<TaskEntity> save(@RequestBody TaskEntity task){
         return ResponseEntity.ok().body(repository.save(task));
     }
 
