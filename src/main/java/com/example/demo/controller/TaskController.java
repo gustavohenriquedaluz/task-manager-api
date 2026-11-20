@@ -19,40 +19,45 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskEntity>> getTasks(){
+    public ResponseEntity<List<TaskEntity>> getTasks(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Boolean done) {
+        if (title != null && !title.isBlank()) {
+            return ResponseEntity.ok().body(repository.findByTitle(title));
+        }
+
+        if (done != null) {
+            return ResponseEntity.ok().body(repository.findByDone(done));
+        }
+
         return ResponseEntity.ok().body(repository.findAll());
     }
 
-    @GetMapping("findById/{id}")
-    public ResponseEntity<TaskEntity> getTaskById(@PathVariable Long id ){
-        return ResponseEntity.ok().body(repository.getById(id));
-    }
+    @GetMapping("{id}")
+    public ResponseEntity<TaskEntity> getTaskById(@PathVariable Long id) {
+        Optional<TaskEntity> find = repository.findById(id);
 
-    @GetMapping("findByTitle/{title}")
-    public ResponseEntity<List<TaskEntity>> getTaskByTitle(@PathVariable String title ){
-        return ResponseEntity.ok().body(repository.findByTitle(title));
-    }
-
-    @GetMapping("findByDone/{done}")
-    public ResponseEntity<List<TaskEntity>> getTaskByDone(@PathVariable Boolean done ){
-        return ResponseEntity.ok().body(repository.findByDone(done));
+        if (find.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(find.get());
     }
 
     @PostMapping
-    public ResponseEntity<TaskEntity> save(@RequestBody TaskEntity task){
+    public ResponseEntity<TaskEntity> save(@RequestBody TaskEntity task) {
         return ResponseEntity.ok().body(repository.save(task));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<TaskEntity> update(@PathVariable Long id, @RequestBody TaskEntity newData){
+    public ResponseEntity<TaskEntity> update(@PathVariable Long id, @RequestBody TaskEntity newData) {
 
-        if (newData.getTitle() == null || newData.getDone() == null || newData.getTitle().isBlank()){
+        if (newData.getTitle() == null || newData.getDone() == null || newData.getTitle().isBlank()) {
             return ResponseEntity.badRequest().build();
         }
 
         Optional<TaskEntity> find = repository.findById(id);
 
-        if (find.isEmpty()){
+        if (find.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
