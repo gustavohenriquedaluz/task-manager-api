@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.TaskEntity;
 import com.example.demo.repository.TaskRepository;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,4 +70,12 @@ public class TaskController {
         return ResponseEntity.ok(repository.save(taskFound));
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        repository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
